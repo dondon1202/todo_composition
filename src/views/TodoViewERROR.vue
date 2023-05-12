@@ -5,6 +5,7 @@ import { onMounted } from 'vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
+
 export default {
   setup() {
     const router = useRouter()
@@ -247,7 +248,7 @@ export default {
 
 <template>
   <section class="bg-todo text-black">
-    <div class="container mx-auto">
+    <div class="container mx-auto min-h-[100vh]">
       <section class="nav mx-auto flex w-[90%] items-center justify-between py-5">
         <img src="logo.svg" alt="" />
         <ul class="flex text-xl font-bold">
@@ -257,140 +258,88 @@ export default {
       </section>
       <section class="mx-auto w-[90%] md:mt-4 lg:w-[50%]">
         <form class="input mt-10 flex items-center justify-between text-center md:mt-20">
-          <input
-            type="text"
-            class="text w-[100%] rounded-lg border-2 p-2 py-4 pl-4"
-            placeholder="新增代辦事項"
-            v-model="data.textContent"
-            @keydown.enter.prevent="addItem"
-          />
-          <i
-            v-on:click="addItem"
-            class="fa-solid fa-feather-pointed ml-[-50px] cursor-pointer p-2 pr-[15px] text-[25px]"
-          ></i>
+          <input type="text" class="text w-[100%] rounded-lg border-2 p-2 py-4 pl-4" placeholder="新增代辦事項"
+            v-model="data.textContent" @keydown.enter.prevent="addItem" />
+          <i v-on:click="addItem"
+            class="fa-solid fa-feather-pointed ml-[-50px] cursor-pointer p-2 pr-[15px] text-[25px]"></i>
         </form>
-        <div class="empty flex flex-col text-center" v-if="data.length === 0">
+        <div class="empty flex flex-col text-center" v-if="data.data.length === 0">
           <h3 class="my-[50px] text-xl font-black">目前尚無待辦事項</h3>
           <img src="empty 1.svg" class="mx-auto w-[50%]" alt="" />
         </div>
         <ul v-else class="list-box m-4 mx-auto w-[100%] rounded-lg border-2 bg-white py-4">
           <ul class="three-button flex justify-around border-b-2 text-center">
-            <li
-              :class="
-                data.showall
-                  ? 'border-b-4 font-black border-[#fadd9b] mb-[-2px] w-[33%] cursor-pointer pb-2 text-lg'
-                  : ' mb-[-2px] w-[33%] cursor-pointer pb-2'
-              "
-              @click="count, all"
-            >
+            <li :class="
+              data.showall
+                ? 'border-b-4 font-black border-[#fadd9b] mb-[-2px] w-[33%] cursor-pointer pb-2 text-lg'
+                : ' mb-[-2px] w-[33%] cursor-pointer pb-2'
+            " @click="count(), all()">
               全部
             </li>
-            <li
-              :class="
-                data.showNotDone
-                  ? 'border-b-4 font-black border-[#fadd9b] mb-[-2px] w-[33%] cursor-pointer pb-2 text-lg'
-                  : ' mb-[-2px] w-[33%] cursor-pointer pb-2'
-              "
-              @click="count, not"
-            >
+            <li :class="
+              data.showNotDone
+                ? 'border-b-4 font-black border-[#fadd9b] mb-[-2px] w-[33%] cursor-pointer pb-2 text-lg'
+                : ' mb-[-2px] w-[33%] cursor-pointer pb-2'
+            " @click="count(), not()">
               待完成
             </li>
-            <li
-              :class="
-                data.showDone
-                  ? 'border-b-4 font-black border-[#fadd9b] mb-[-2px] w-[33%] cursor-pointer pb-2 text-lg'
-                  : ' mb-[-2px] w-[33%] cursor-pointer pb-2'
-              "
-              @click="count, done"
-            >
+            <li :class="
+              data.showDone
+                ? 'border-b-4 font-black border-[#fadd9b] mb-[-2px] w-[33%] cursor-pointer pb-2 text-lg'
+                : ' mb-[-2px] w-[33%] cursor-pointer pb-2'
+            " @click="count(), done()">
               已完成
             </li>
           </ul>
           <div class="list px-10 pt-2">
-            <ul
-              class="flex justify-between border-b-2 py-4"
-              v-for="(item, index) in data.data"
-              :key="index"
-            >
-              <li class="flex" v-if="data.showall">
-                <img
-                  class="flex h-[22px] w-[22px] cursor-pointer"
-                  type="checkbox"
-                  @click="checkBoxToDone(item.id, index)"
-                  :src="item.completed_at !== null ? './check.svg' : './checkbox.svg'"
-                />
-                <p
-                  :class="item.completed_at !== null ? 'ml-4  line-through text-gray-300' : 'ml-4 '"
-                >
-                  {{ item.content }}
-                </p>
-              </li>
-              <li>
-                <img
-                  src="Vector.svg"
-                  alt=""
-                  id="delete"
-                  class="cursor-pointer"
-                  v-on:click="deleteItem(item.id, index)"
-                />
-              </li>
-            </ul>
-            <!-- <ul
-              class="flex justify-between border-b-2 py-4"
-              v-for="(item, index) in data.Done"
-              :key="index"
-            >
-              <li class="flex" v-if="data.showDone">
-                <img
-                  class="flex h-[22px] w-[22px] cursor-pointer"
-                  type="checkbox"
-                  @click="checkBoxToDone(item.id, index)"
-                  :src="item.completed_at !== null ? './check.svg' : './checkbox.svg'"
-                />
-                <p
-                  :class="item.completed_at !== null ? 'ml-4  line-through text-gray-300' : 'ml-4 '"
-                >
-                  {{ item.content }}
-                </p>
-              </li>
-              <li>
-                <img
-                  src="Vector.svg"
-                  alt=""
-                  id="delete"
-                  class="cursor-pointer"
-                  v-on:click="deleteItem(item.id, index)"
-                />
-              </li>
-            </ul> -->
-            <!-- <ul
-              class="flex justify-between border-b-2 py-4"
-              v-for="(item, index) in data.notDone"
-              :key="index"
-            >
-              <li class="flex" v-if="data.showNotDone">
-                <img
-                  class="flex h-[22px] w-[22px] cursor-pointer"
-                  type="checkbox"
-                  @click="checkBoxToDone(item.id, index)"
-                  :src="item.completed_at !== null ? './check.svg' : './checkbox.svg'"
-                />
-                <p
-                  :class="item.completed_at !== null ? 'ml-4  line-through text-gray-300' : 'ml-4 '"
-                >
-                  {{ item.content }}
-                </p>
-              </li>
-              <li>
-                <img
-                  src="Vector.svg"
-                  alt=""
-                  id="delete"
-                  class="cursor-pointer"
-                  v-on:click="deleteItem(item.id, index)"
-                />
-              </li>
-            </ul> -->
+            <template v-if="data.showall">
+              <ul class="flex justify-between border-b-2 py-4" v-for="(item, index) in data.data" :key="index">
+                <li class="flex">
+                  <img class="flex h-[22px] w-[22px] cursor-pointer" type="checkbox"
+                    @click="checkBoxToDone(item.id, index)"
+                    :src="item.completed_at !== null ? './check.svg' : './checkbox.svg'" />
+                  <p :class="item.completed_at !== null ? 'ml-4  line-through text-gray-300' : 'ml-4 '">
+                    {{ item.content }}
+                  </p>
+                </li>
+                <li>
+                  <img src="Vector.svg" alt="" id="delete" class="cursor-pointer"
+                    v-on:click="deleteItem(item.id, index)" />
+                </li>
+              </ul>
+            </template>
+            <template v-if="data.showDone">
+              <ul class="flex justify-between border-b-2 py-4" v-for="(item, index) in data.Done" :key="index">
+                <li class="flex">
+                  <img class="flex h-[22px] w-[22px] cursor-pointer" type="checkbox"
+                    @click="checkBoxToDone(item.id, index)"
+                    :src="item.completed_at !== null ? './check.svg' : './checkbox.svg'" />
+                  <p :class="item.completed_at !== null ? 'ml-4  line-through text-gray-300' : 'ml-4 '">
+                    {{ item.content }}
+                  </p>
+                </li>
+                <li>
+                  <img src="Vector.svg" alt="" id="delete" class="cursor-pointer"
+                    v-on:click="deleteItem(item.id, index)" />
+                </li>
+              </ul>
+            </template>
+            <template v-if="data.showNotDone">
+              <ul class="flex justify-between border-b-2 py-4" v-for="(item, index) in data.notDone" :key="index">
+                <li class="flex">
+                  <img class="flex h-[22px] w-[22px] cursor-pointer" type="checkbox"
+                    @click="checkBoxToDone(item.id, index)"
+                    :src="item.completed_at !== null ? './check.svg' : './checkbox.svg'" />
+                  <p :class="item.completed_at !== null ? 'ml-4  line-through text-gray-300' : 'ml-4 '">
+                    {{ item.content }}
+                  </p>
+                </li>
+                <li>
+                  <img src="Vector.svg" alt="" id="delete" class="cursor-pointer"
+                    v-on:click="deleteItem(item.id, index)" />
+                </li>
+              </ul>
+            </template>
           </div>
           <div class="mt-4 flex justify-between px-10">
             <p v-if="data.showNotDoneMessage">{{ data.notDone.length }}個待完成事項</p>
@@ -407,14 +356,13 @@ export default {
 [v-cloak] {
   display: none;
 }
+
 .bg-todo {
-  background: linear-gradient(
-    172.7deg,
-    #ffd370 5.12%,
-    #ffd370 53.33%,
-    #ffd370 53.44%,
-    #ffffff 53.45%,
-    #ffffff 94.32%
-  );
+  background: linear-gradient(172.7deg,
+      #ffd370 5.12%,
+      #ffd370 53.33%,
+      #ffd370 53.44%,
+      #ffffff 53.45%,
+      #ffffff 94.32%);
 }
 </style>
