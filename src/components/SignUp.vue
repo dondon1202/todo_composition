@@ -1,8 +1,10 @@
 <script>
-import { reactive } from 'vue'
-import axios from 'axios'
+import { reactive, onMounted } from 'vue'
 import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router'
+import { apiSignUp } from '../../apis/user.js'
+
+
 export default {
   setup() {
     const router = useRouter()
@@ -40,7 +42,9 @@ export default {
         state.emptycheckpasswordError = '確認密碼尚未填寫'
       }
     }
+
     const signUp = () => {
+
       vertify()
       let obj = {
         user: {
@@ -63,9 +67,12 @@ export default {
         Swal.fire('註冊失敗', '密碼前後不一致，請重新確認', 'warning')
         resetForm()
       } else {
-        axios
-          .post('https://todoo.5xcamp.us/users', obj)
+
+        // axios
+        //   .post('https://todoo.5xcamp.us/users', obj)
+        apiSignUp(obj)
           .then((response) => {
+            console.log(response);
             if (response.data.message == '註冊成功') {
               Swal.fire('註冊成功', '恭喜', 'success').then(() => {
                 router.push('/')
@@ -79,8 +86,12 @@ export default {
           })
       }
     }
+    onMounted(() => {
+
+    })
     return {
       state,
+      onMounted,
       vertify,
       signUp,
       resetForm
@@ -89,95 +100,52 @@ export default {
 }
 </script>
 <template>
-  <section
-    class="bg-[#FFD370] pt-[50px] pb-[100px] lg:pt-[50px] lg:pb-[150px] text-black font-normal"
-  >
+  <section class="bg-[#FFD370] pt-[50px] pb-[100px] lg:pt-[50px] lg:pb-[150px] text-black font-normal">
     <div class="container mx-auto md:px-[100px] lg:flex">
-      <section
-        class="nav mx-auto flex w-[80%] items-center justify-center py-5 lg:w-[40%] lg:flex-col"
-      >
-        <a href="index.html"><img src="logo.svg" alt="" class="w-[400px] lg:w-[300px]" /></a>
-        <img src="img.svg" alt="" class="hidden lg:mt-5 lg:block" />
+      <section class="nav mx-auto flex w-[80%] items-center justify-center py-5 lg:w-[40%] lg:flex-col">
+        <a href="index.html"><img src="/logo.svg" alt="" class="w-[400px] lg:w-[300px]" /></a>
+        <img src="/img.svg" alt="" class="hidden lg:mt-5 lg:block" />
       </section>
       <section class="mx-auto w-[80%] lg:mt-20 lg:w-[40%]">
         <h1 class="text-center text-3xl font-bold lg:text-3xl">註冊帳號</h1>
 
         <form class="form mt-10">
-          <h2
-            class="mt-3 mb-2 text-lg font-black after:ml-0.5 after:text-red-500 after:content-['*']"
-          >
+          <h2 class="mt-3 mb-2 text-lg font-black after:ml-0.5 after:text-red-500 after:content-['*']">
             Email
           </h2>
-          <input
-            class="peer mb-2 w-full rounded-xl py-3 px-4"
-            type="email"
-            name=""
-            id="email"
-            placeholder="請輸入Email"
-            v-model="state.email"
-            @keydown.enter="signUp"
-          />
+          <input class="peer mb-2 w-full rounded-xl py-3 px-4" type="email" name="" id="email" placeholder="請輸入Email"
+            v-model="state.email" @keydown.enter="signUp" />
           <p class="invisible text-sm text-pink-600 peer-invalid:visible">請輸入正確的Email</p>
           <div class="mb-4 mt-[-20px] text-red-500" v-if="state.email == ''" v-cloak>
             {{ state.emptyEmailError }}
           </div>
-          <h2
-            class="mt-3 mb-2 text-lg font-black after:ml-0.5 after:text-red-500 after:content-['*']"
-          >
+          <h2 class="mt-3 mb-2 text-lg font-black after:ml-0.5 after:text-red-500 after:content-['*']">
             您的暱稱
           </h2>
-          <input
-            class="mb-6 w-full rounded-xl py-3 px-4"
-            type="text"
-            name=""
-            id="name"
-            placeholder="請輸入暱稱"
-            v-model="state.nickname"
-            @keydown.enter="signUp"
-          />
+          <input class="mb-6 w-full rounded-xl py-3 px-4" type="text" name="" id="name" placeholder="請輸入暱稱"
+            v-model="state.nickname" @keydown.enter="signUp" />
           <div class="mb-4 mt-[-20px] text-red-500" v-if="state.nickname == ''" v-cloak>
             {{ state.emptynicknameError }}
           </div>
-          <h2
-            class="mt-3 mb-2 text-lg font-black after:ml-0.5 after:text-red-500 after:content-['*']"
-          >
+          <h2 class="mt-3 mb-2 text-lg font-black after:ml-0.5 after:text-red-500 after:content-['*']">
             Password
           </h2>
-          <input
-            class="mb-6 w-full rounded-xl py-3 px-4"
-            type="password"
-            name=""
-            id="pwd"
-            placeholder="請輸入Password"
-            v-model="state.password"
-            @keydown.enter="signUp"
-          />
+          <input class="mb-6 w-full rounded-xl py-3 px-4" type="password" name="" id="pwd" placeholder="請輸入Password"
+            v-model="state.password" @keydown.enter="signUp" />
           <div class="mb-4 mt-[-20px] text-red-500" v-if="state.password == ''" v-cloak>
             {{ state.emptyPasswordError }}
           </div>
-          <h2
-            class="mt-3 mb-2 text-lg font-black after:ml-0.5 after:text-red-500 after:content-['*']"
-          >
+          <h2 class="mt-3 mb-2 text-lg font-black after:ml-0.5 after:text-red-500 after:content-['*']">
             再次輸入Password
           </h2>
-          <input
-            class="mb-6 w-full rounded-xl py-3 px-4"
-            type="password"
-            name=""
-            id="pwd_check"
-            placeholder="再次輸入Password"
-            v-model="state.checkpassword"
-            @keydown.enter="signUp"
-          />
+          <input class="mb-6 w-full rounded-xl py-3 px-4" type="password" name="" id="pwd_check"
+            placeholder="再次輸入Password" v-model="state.checkpassword" @keydown.enter="signUp" />
           <div class="mb-4 mt-[-20px] text-red-500" v-if="state.checkpassword == ''" v-cloak>
             {{ state.emptycheckpasswordError }}
           </div>
         </form>
         <div class="mt-6 flex justify-center">
-          <button
-            v-on:click="signUp()"
-            class="btn-register w-[128px] rounded-lg bg-black py-3 text-[16px] text-white"
-          >
+          <button v-on:click="signUp()" class="btn-register w-[128px] rounded-lg bg-black py-3 text-[16px] text-white">
             註冊帳號
           </button>
         </div>
